@@ -31,14 +31,14 @@ export const authAPI = {
 export const resortAPI = {
   getAll: () => api.get('/resorts'),
   getById: (id: string) => api.get(`/resorts/${id}`),
-  create: (data: any) => api.post('/resorts', data),
-  update: (id: string, data: any) => api.put(`/resorts/${id}`, data),
+  create: (data: Record<string, unknown>) => api.post('/resorts', data),
+  update: (id: string, data: Record<string, unknown>) => api.put(`/resorts/${id}`, data),
   delete: (id: string) => api.delete(`/resorts/${id}`),
 };
 
 // Booking APIs
 export const bookingAPI = {
-  create: (data: any) => api.post('/bookings', data),
+  create: (data: Record<string, unknown>) => api.post('/bookings', data),
   getAll: () => api.get('/bookings'),
   getById: (id: string) => api.get(`/bookings/${id}`),
   updateStatus: (id: string, status: string) =>

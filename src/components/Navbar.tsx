@@ -18,13 +18,12 @@ import { User } from '@/types';
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [isClient, setIsClient] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
-    setIsClient(true);
+    // only read localStorage on client after mount
     setUser(getUser());
   }, []);
+  const router = useRouter();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,7 +39,7 @@ export default function Navbar() {
     router.push('/');
   };
 
-  if (!isClient) return null;
+  // Navbar is client-only and uses localStorage-safe helpers
 
   return (
     <AppBar position="sticky" sx={{ backgroundColor: '#1976d2' }}>
@@ -48,7 +47,7 @@ export default function Navbar() {
         <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
           <Link href="/">
             <Box sx={{ fontSize: '24px', fontWeight: 'bold', color: 'white', cursor: 'pointer' }}>
-               Scaper
+              Scaper
             </Box>
           </Link>
 
@@ -70,14 +69,14 @@ export default function Navbar() {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem onClick={handleMenuClose} component={Link} href="/bookings">
+                  <MenuItem onClick={() => { handleMenuClose(); router.push('/bookings'); }}>
                     My Bookings
                   </MenuItem>
-                  <MenuItem onClick={handleMenuClose} component={Link} href="/profile">
+                  <MenuItem onClick={() => { handleMenuClose(); router.push('/profile'); }}>
                     Profile
                   </MenuItem>
                   {(user.role === 'admin' || user.role === 'superadmin') && (
-                    <MenuItem onClick={handleMenuClose} component={Link} href="/admin">
+                    <MenuItem onClick={() => { handleMenuClose(); router.push('/admin'); }}>
                       Admin Panel
                     </MenuItem>
                   )}
@@ -86,14 +85,8 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/login">
-                  <Button color="inherit">Login</Button>
-                </Link>
-                <Link href="/register">
-                  <Button variant="contained" color="secondary">
-                    Sign Up
-                  </Button>
-                </Link>
+                <Button color="inherit" onClick={() => router.push('/login')}>Login</Button>
+                <Button variant="contained" color="secondary" onClick={() => router.push('/register')}>Sign Up</Button>
               </>
             )}
           </Box>
