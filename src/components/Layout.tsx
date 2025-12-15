@@ -16,9 +16,7 @@ export default function Layout({ children }: LayoutProps) {
   useEffect(() => {
     async function fetchResorts() {
       try {
-        // use the app-wide API helper which handles tokens & base URL
         const response = await resortAPI.getAll();
-        // support both { data: [{...}] } and { data: { data: [...] } }
         const payload = response?.data?.data ?? response?.data;
         console.log('Resorts fetched:', payload);
         setResorts(Array.isArray(payload) ? payload : []);
@@ -36,13 +34,12 @@ export default function Layout({ children }: LayoutProps) {
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       <Box component="main" sx={{ flexGrow: 1, py: 4, backgroundColor: '#f5f5f5' }}>
-        {/* render children (pages) first — this layout also shows a resorts grid after the page content */}
         {children}
         {!hideResortGrid && (
           <Box sx={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: 16,
+            gap: 1,
             padding: { xs: 1, md: 2, lg: 4 },
           }}>
             {resorts.map((resort) => (
