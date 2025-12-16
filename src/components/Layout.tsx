@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Box, Container, Typography, Skeleton, Grid, Button } from '@mui/material';
+import { Box, Container, Typography, Skeleton, Grid } from '@mui/material';
 import Navbar from './Navbar';
 import ResortCard from './ResortCard';
 import { Resort } from '@/types';
@@ -114,9 +114,9 @@ export default function Layout({ children }: LayoutProps) {
     fetchResorts();
   }, []);
 
-  // hide resort grid on dedicated auth pages
+  // hide resort grid on all pages except home and resorts
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
-  const hideResortGrid = pathname.startsWith('/login') || pathname.startsWith('/register');
+  const hideResortGrid = !(pathname === '/' || pathname === '/resorts');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

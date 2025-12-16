@@ -35,8 +35,9 @@ export default function RegisterPage() {
       } else {
         setError(data?.message || 'Registration failed');
       }
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err?.message || 'Registration failed');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
+      setError(error?.response?.data?.message || error?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }

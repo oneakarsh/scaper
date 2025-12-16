@@ -30,8 +30,9 @@ export default function LoginPage() {
       } else {
         setError(data?.message || 'Login failed');
       }
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err?.message || 'Login failed');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
+      setError(error?.response?.data?.message || error?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -101,7 +102,7 @@ export default function LoginPage() {
             </Button>
 
             <Typography align="center">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Button
                 onClick={() => router.push('/register')}
                 sx={{ textTransform: 'none', p: 0, minWidth: 'auto' }}

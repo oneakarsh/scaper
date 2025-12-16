@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -20,24 +20,36 @@ import {
   Chip,
   Typography,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import {
   Search as SearchIcon,
   LocationOn as LocationIcon,
   Star as StarIcon,
   AttachMoney as MoneyIcon,
-  FilterList as FilterIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
+  Home as HomeIcon,
 } from '@mui/icons-material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getUser, logout } from '@/lib/auth';
+import { getUser, logout, setToken, setUser } from '@/lib/auth';
+import { authAPI } from '@/lib/api';
 import { User } from '@/types';
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user] = useState<User | null>(() => {
+    if (typeof window !== 'undefined') {
+      return getUser();
+    }
+    return null;
+  });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -49,11 +61,26 @@ export default function Navbar() {
     priceRange: [0, 2000] as [number, number],
   });
 
-  const router = useRouter();
+  // Dialog states
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
+  const [openRegisterDialog, setOpenRegisterDialog] = useState(false);
 
-  useEffect(() => {
-    setUser(getUser());
-  }, []);
+  // Login form states
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  // Register form states
+  const [registerName, setRegisterName] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPhone, setRegisterPhone] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const [registerError, setRegisterError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -73,7 +100,7 @@ export default function Navbar() {
     // You can implement search logic here or pass to parent component
   };
 
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = (key: string, value: unknown) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
@@ -91,8 +118,72 @@ export default function Navbar() {
     'Hiking', 'Water Sports', 'Camel Rides', 'Hot Springs'
   ];
 
+  // Login handlers
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError(null);
+    if (!loginEmail || !loginPassword) return setLoginError('Please enter email and password');
+
+    try {
+      setLoginLoading(true);
+      const res = await authAPI.login({ email: loginEmail, password: loginPassword });
+      const data = res.data;
+      if (data && data.token) {
+        setToken(data.token);
+        if (data.user) setUser(data.user);
+        setOpenLoginDialog(false);
+        router.push('/');
+      } else {
+        setLoginError(data?.message || 'Login failed');
+      }
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
+      setLoginError(error?.response?.data?.message || error?.message || 'Login failed');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleOpenRegisterFromLogin = () => {
+    setOpenLoginDialog(false);
+    setOpenRegisterDialog(true);
+  };
+
+  // Register handlers
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRegisterError(null);
+    if (!registerName || !registerEmail || !registerPassword) return setRegisterError('Please fill the required fields');
+    if (registerPassword.length < 6) return setRegisterError('Password should be at least 6 characters');
+    if (registerPassword !== registerConfirmPassword) return setRegisterError('Passwords do not match');
+
+    try {
+      setRegisterLoading(true);
+      const res = await authAPI.register({ name: registerName, email: registerEmail, password: registerPassword, phone: registerPhone });
+      const data = res.data;
+      if (data && data.token) {
+        setToken(data.token);
+        if (data.user) setUser(data.user);
+        setOpenRegisterDialog(false);
+        router.push('/');
+      } else {
+        setRegisterError(data?.message || 'Registration failed');
+      }
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
+      setRegisterError(error?.response?.data?.message || error?.message || 'Registration failed');
+    } finally {
+      setRegisterLoading(false);
+    }
+  };
+
+  const handleOpenLoginFromRegister = () => {
+    setOpenRegisterDialog(false);
+    setOpenLoginDialog(true);
+  };
+
   return (
-    <Box>
+    <><><Box>
       <AppBar
         position="sticky"
         elevation={4}
@@ -105,6 +196,20 @@ export default function Navbar() {
           <Toolbar sx={{ justifyContent: 'space-between', py: 1, gap: 2 }}>
             {/* Left Side - Action Buttons */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Link href="/" style={{ textDecoration: 'none' }}>
+                <IconButton
+                  color="inherit"
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.15)',
+                      transform: 'translateY(-1px)',
+                    },
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <HomeIcon />
+                </IconButton>
+              </Link>
               {user ? (
                 <>
                   <Button
@@ -139,15 +244,15 @@ export default function Navbar() {
                       },
                     }}
                   >
-                    <MenuItem onClick={() => { handleMenuClose(); router.push('/bookings'); }}>
+                    <MenuItem onClick={() => { handleMenuClose(); router.push('/bookings'); } }>
                       📋 My Bookings
                     </MenuItem>
-                    <MenuItem onClick={() => { handleMenuClose(); router.push('/profile'); }}>
+                    <MenuItem onClick={() => { handleMenuClose(); router.push('/profile'); } }>
                       👤 Profile
                     </MenuItem>
 
                     {(user.role === 'admin' || user.role === 'superadmin') && (
-                      <MenuItem onClick={() => { handleMenuClose(); router.push('/admin'); }}>
+                      <MenuItem onClick={() => { handleMenuClose(); router.push('/admin'); } }>
                         ⚙️ Admin Panel
                       </MenuItem>
                     )}
@@ -162,7 +267,7 @@ export default function Navbar() {
                 <>
                   <Button
                     color="inherit"
-                    onClick={() => router.push('/login')}
+                    onClick={() => setOpenLoginDialog(true)}
                     sx={{
                       textTransform: 'none',
                       '&:hover': {
@@ -176,7 +281,7 @@ export default function Navbar() {
                   </Button>
                   <Button
                     variant="contained"
-                    onClick={() => router.push('/register')}
+                    onClick={() => setOpenRegisterDialog(true)}
                     sx={{
                       textTransform: 'none',
                       fontWeight: 600,
@@ -234,8 +339,7 @@ export default function Navbar() {
                       },
                     },
                   },
-                }}
-              />
+                }} />
               <IconButton
                 onClick={() => setShowSearch(!showSearch)}
                 sx={{
@@ -309,8 +413,7 @@ export default function Navbar() {
                       borderRadius: 3,
                       backgroundColor: 'white',
                     },
-                  }}
-                />
+                  }} />
               </Grid>
 
               {/* Check-in Date */}
@@ -327,8 +430,7 @@ export default function Navbar() {
                       borderRadius: 3,
                       backgroundColor: 'white',
                     },
-                  }}
-                />
+                  }} />
               </Grid>
 
               {/* Check-out Date */}
@@ -345,8 +447,7 @@ export default function Navbar() {
                       borderRadius: 3,
                       backgroundColor: 'white',
                     },
-                  }}
-                />
+                  }} />
               </Grid>
 
               {/* Price Range */}
@@ -370,8 +471,7 @@ export default function Navbar() {
                           boxShadow: '0 0 0 8px rgba(25, 118, 210, 0.16)',
                         },
                       },
-                    }}
-                  />
+                    }} />
                 </Box>
               </Grid>
 
@@ -395,8 +495,7 @@ export default function Navbar() {
                           transform: 'scale(1.05)',
                         },
                         transition: 'all 0.2s',
-                      }}
-                    />
+                      }} />
                   ))}
                 </Box>
               </Grid>
@@ -430,6 +529,141 @@ export default function Navbar() {
           </Container>
         </Paper>
       </Collapse>
-    </Box>
+    </Box><Dialog open={openLoginDialog} onClose={() => setOpenLoginDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Welcome Back</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            Sign in to your Scaper account
+          </Typography>
+
+          {loginError && <Alert severity="error" sx={{ mb: 2 }}>{loginError}</Alert>}
+
+          <Box component="form" onSubmit={handleLoginSubmit}>
+            <TextField
+              label="Email"
+              type="email"
+              value={loginEmail}
+              onChange={(e) => setLoginEmail(e.target.value)}
+              fullWidth
+              margin="normal"
+              required
+              variant="outlined" />
+
+            <TextField
+              label="Password"
+              type="password"
+              value={loginPassword}
+              onChange={(e) => setLoginPassword(e.target.value)}
+              fullWidth
+              margin="normal"
+              required
+              variant="outlined" />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ flexDirection: 'column', px: 3, pb: 3 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            size="large"
+            disabled={loginLoading}
+            onClick={handleLoginSubmit}
+            sx={{ mb: 2, py: 1.5 }}
+          >
+            {loginLoading ? <CircularProgress size={20} color="inherit" /> : 'Sign In'}
+          </Button>
+
+          <Typography align="center">
+            Don&apos;t have an account?{' '}
+            <Button
+              onClick={handleOpenRegisterFromLogin}
+              sx={{ textTransform: 'none', p: 0, minWidth: 'auto' }}
+            >
+              Sign up
+            </Button>
+          </Typography>
+        </DialogActions>
+      </Dialog></><Dialog open={openRegisterDialog} onClose={() => setOpenRegisterDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Create Account</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            Join Scaper and start booking amazing resorts
+          </Typography>
+
+          {registerError && <Alert severity="error" sx={{ mb: 2 }}>{registerError}</Alert>}
+
+          <Box component="form" onSubmit={handleRegisterSubmit}>
+            <TextField
+              label="Full Name"
+              value={registerName}
+              onChange={(e) => setRegisterName(e.target.value)}
+              fullWidth
+              margin="normal"
+              required
+              variant="outlined" />
+
+            <TextField
+              label="Email"
+              type="email"
+              value={registerEmail}
+              onChange={(e) => setRegisterEmail(e.target.value)}
+              fullWidth
+              margin="normal"
+              required
+              variant="outlined" />
+
+            <TextField
+              label="Phone"
+              value={registerPhone}
+              onChange={(e) => setRegisterPhone(e.target.value)}
+              fullWidth
+              margin="normal"
+              variant="outlined" />
+
+            <TextField
+              label="Password"
+              type="password"
+              value={registerPassword}
+              onChange={(e) => setRegisterPassword(e.target.value)}
+              fullWidth
+              margin="normal"
+              required
+              variant="outlined" />
+
+            <TextField
+              label="Confirm Password"
+              type="password"
+              value={registerConfirmPassword}
+              onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+              fullWidth
+              margin="normal"
+              required
+              variant="outlined" />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ flexDirection: 'column', px: 3, pb: 3 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            size="large"
+            disabled={registerLoading}
+            onClick={handleRegisterSubmit}
+            sx={{ mb: 2, py: 1.5 }}
+          >
+            {registerLoading ? <CircularProgress size={20} color="inherit" /> : 'Create Account'}
+          </Button>
+
+          <Typography align="center">
+            Already have an account?{' '}
+            <Button
+              onClick={handleOpenLoginFromRegister}
+              sx={{ textTransform: 'none', p: 0, minWidth: 'auto' }}
+            >
+              Sign in
+            </Button>
+          </Typography>
+        </DialogActions>
+      </Dialog></>
   );
 }

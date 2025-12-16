@@ -19,7 +19,6 @@ const Home = () => {
                 variant="contained"
                 size="large"
                 sx={{
-                  mr: 2,
                   px: 4,
                   py: 1.5,
                   fontSize: '1.1rem',
@@ -27,20 +26,6 @@ const Home = () => {
                 }}
               >
                 Explore Resorts
-              </Button>
-            </Link>
-            <Link href="/register" style={{ textDecoration: 'none' }}>
-              <Button
-                variant="outlined"
-                size="large"
-                sx={{
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
-                  textTransform: 'none',
-                }}
-              >
-                Get Started
               </Button>
             </Link>
           </Box>
