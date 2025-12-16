@@ -66,12 +66,9 @@ export default function Navbar() {
 
           {/* Navigation */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            {['Home', 'Resorts'].map((item) => (
+            <Link href="/" style={{ textDecoration: 'none' }}>
               <Button
-                key={item}
                 color="inherit"
-                component={Link}
-                href={item === 'Home' ? '/' : '/resorts'}
                 sx={{
                   fontWeight: 500,
                   textTransform: 'none',
@@ -80,9 +77,23 @@ export default function Navbar() {
                   },
                 }}
               >
-                {item}
+                Home
               </Button>
-            ))}
+            </Link>
+            <Link href="/resorts" style={{ textDecoration: 'none' }}>
+              <Button
+                color="inherit"
+                sx={{
+                  fontWeight: 500,
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.15)',
+                  },
+                }}
+              >
+                Resorts
+              </Button>
+            </Link>
 
             {user ? (
               <>

@@ -39,7 +39,7 @@ export default function ResortCard({ resort }: ResortCardProps) {
   return (
     <Card
       sx={{
-        height: '80%',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 3,

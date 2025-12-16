@@ -38,16 +38,35 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-      <Container maxWidth="sm" sx={{ py: 12 }}>
-        <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3, backgroundColor: 'white' }}>
-          <Typography variant="h5" component="h1" sx={{ mb: 2 }}>
-            Login to Scaper
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'background.default',
+        py: 4,
+      }}
+    >
+      <Container maxWidth="sm">
+        <Box
+          sx={{
+            p: 4,
+            borderRadius: 3,
+            boxShadow: 3,
+            backgroundColor: 'background.paper',
+          }}
+        >
+          <Typography variant="h4" component="h1" gutterBottom fontWeight={600}>
+            Welcome Back
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            Sign in to your Scaper account
           </Typography>
 
           {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-          <form onSubmit={submit}>
+          <Box component="form" onSubmit={submit}>
             <TextField
               label="Email"
               type="email"
@@ -56,6 +75,7 @@ export default function LoginPage() {
               fullWidth
               margin="normal"
               required
+              variant="outlined"
             />
 
             <TextField
@@ -66,19 +86,32 @@ export default function LoginPage() {
               fullWidth
               margin="normal"
               required
+              variant="outlined"
             />
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 3 }}>
-              <Button type="submit" variant="contained" color="primary" disabled={loading}>
-                {loading ? <CircularProgress size={20} color="inherit" /> : 'Login'}
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              size="large"
+              disabled={loading}
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
+            >
+              {loading ? <CircularProgress size={20} color="inherit" /> : 'Sign In'}
+            </Button>
+
+            <Typography align="center">
+              Don't have an account?{' '}
+              <Button
+                onClick={() => router.push('/register')}
+                sx={{ textTransform: 'none', p: 0, minWidth: 'auto' }}
+              >
+                Sign up
               </Button>
-              <Button type="button" onClick={() => router.push('/register')}>
-                Create account
-              </Button>
-            </Box>
-          </form>
+            </Typography>
+          </Box>
         </Box>
       </Container>
-    </div>
+    </Box>
   );
 }
