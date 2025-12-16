@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Box, Container, Typography, Skeleton, Grid } from '@mui/material';
+import { Box, Container, Typography, Skeleton, Grid, Button } from '@mui/material';
 import Navbar from './Navbar';
 import ResortCard from './ResortCard';
 import { Resort } from '@/types';
@@ -25,13 +25,15 @@ export default function Layout({ children }: LayoutProps) {
         setResorts(Array.isArray(payload) ? payload : []);
       } catch (error) {
         console.error("Failed to fetch resorts:", error);
-        // Use mock data for development
+        // Use mock data for development (with coordinates added above)
         setResorts([
           {
             id: '1',
             name: 'Paradise Resort',
             description: 'A luxurious beachfront resort with stunning ocean views.',
             location: 'Maldives',
+            latitude: 3.2028,
+            longitude: 73.2207,
             pricePerNight: 450,
             amenities: ['WiFi', 'Pool', 'Spa', 'Restaurant'],
             maxGuests: 4,
@@ -43,6 +45,8 @@ export default function Layout({ children }: LayoutProps) {
             name: 'Mountain View Lodge',
             description: 'Cozy mountain retreat with hiking trails and fireplaces.',
             location: 'Switzerland',
+            latitude: 46.8182,
+            longitude: 8.2275,
             pricePerNight: 320,
             amenities: ['Fireplace', 'Hiking', 'Restaurant', 'Bar'],
             maxGuests: 6,
@@ -54,6 +58,8 @@ export default function Layout({ children }: LayoutProps) {
             name: 'Urban Luxury Hotel',
             description: 'Modern city hotel with rooftop pool and fine dining.',
             location: 'New York',
+            latitude: 40.7128,
+            longitude: -74.0060,
             pricePerNight: 280,
             amenities: ['Pool', 'Gym', 'Restaurant', 'Bar', 'WiFi'],
             maxGuests: 2,
@@ -65,6 +71,8 @@ export default function Layout({ children }: LayoutProps) {
             name: 'Tropical Paradise',
             description: 'Island resort with private beaches and water sports.',
             location: 'Hawaii',
+            latitude: 19.8968,
+            longitude: -155.5828,
             pricePerNight: 520,
             amenities: ['Beach', 'Water Sports', 'Spa', 'Restaurant'],
             maxGuests: 8,
@@ -76,6 +84,8 @@ export default function Layout({ children }: LayoutProps) {
             name: 'Desert Oasis',
             description: 'Luxury desert resort with camel rides and traditional dining.',
             location: 'Dubai',
+            latitude: 25.2048,
+            longitude: 55.2708,
             pricePerNight: 380,
             amenities: ['Camel Rides', 'Pool', 'Restaurant', 'Spa'],
             maxGuests: 4,
@@ -87,6 +97,8 @@ export default function Layout({ children }: LayoutProps) {
             name: 'Forest Retreat',
             description: 'Peaceful forest cabin with nature trails and hot springs.',
             location: 'Canada',
+            latitude: 56.1304,
+            longitude: -106.3468,
             pricePerNight: 250,
             amenities: ['Hot Springs', 'Hiking', 'Fireplace', 'Restaurant'],
             maxGuests: 4,
@@ -116,6 +128,7 @@ export default function Layout({ children }: LayoutProps) {
             <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
               Featured Resorts
             </Typography>
+
             {loading ? (
               <Grid container spacing={3}>
                 {Array.from({ length: 6 }).map((_, index) => (

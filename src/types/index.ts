@@ -11,6 +11,8 @@ export interface Resort {
   name: string;
   description: string;
   location: string;
+  latitude: number;
+  longitude: number;
   pricePerNight: number;
   amenities: string[];
   maxGuests: number;
