@@ -26,7 +26,7 @@ export default function RegisterPage() {
 
     try {
       setLoading(true);
-      const res = await authAPI.register({ name, email, password, phone });
+      const res = await authAPI.register({ name, email, password, confirmPassword,phone });
       const data = res.data;
       if (data && data.token) {
         setToken(data.token);
