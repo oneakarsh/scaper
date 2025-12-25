@@ -10,11 +10,13 @@ import {
   Button,
   Typography,
   Alert,
-  CircularProgress,
+  CircularProgress, IconButton,
+  InputAdornment,
   Box,
 } from '@mui/material';
 import { authAPI } from '@/lib/api';
 import { setToken, setUser } from '@/lib/auth';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 interface RegisterDialogProps {
   open: boolean;
@@ -36,7 +38,8 @@ export default function RegisterDialog({
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -137,41 +140,58 @@ export default function RegisterDialog({
           />
           <TextField
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
             required
             variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
-                '&:hover fieldset': {
-                  borderColor: '#1976d2',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#1976d2',
-                },
+                '&:hover fieldset': { borderColor: '#1976d2' },
+                '&.Mui-focused fieldset': { borderColor: '#1976d2' },
               },
             }}
           />
+
           <TextField
             label="Confirm Password"
-            type="password"
+            type={showConfirmPassword ? 'text' : 'password'}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             fullWidth
             required
             variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
-                '&:hover fieldset': {
-                  borderColor: '#1976d2',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#1976d2',
-                },
+                '&:hover fieldset': { borderColor: '#1976d2' },
+                '&.Mui-focused fieldset': { borderColor: '#1976d2' },
               },
             }}
           />

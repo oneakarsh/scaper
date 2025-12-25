@@ -158,7 +158,7 @@ export default function ResortCard({ resort }: ResortCardProps) {
             },
           }}
         >
-          Book Now
+          View Resort
         </Button>
       </CardActions>
     </Card>

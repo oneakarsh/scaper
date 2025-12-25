@@ -10,7 +10,6 @@ import {
   IconButton,
 } from '@mui/material';
 import {
-  Home as HomeIcon,
   FilterAlt as FilterAltIcon,
   FilterAltOff as FilterAltOff,
 } from '@mui/icons-material';
@@ -138,7 +137,17 @@ export default function Navbar() {
                   alignItems: 'center',
                 }}
               >
-                🏖️ Scaper
+                <img src={'/logo.png'} alt="Scaper Logo" width={32} height={32} style={{ marginRight: 8 }} />
+                <Box
+                  component="span"
+                  sx={{
+                    fontFamily: `'Poppins', 'Inter', sans-serif`,
+                    fontWeight: 500,
+                    fontSize: { xs: 18, md: 20}
+                  }}
+                >
+                  Scaper
+                </Box>
               </Box>
             </Link>
 
