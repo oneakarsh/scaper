@@ -166,6 +166,9 @@ export default function BookingPage() {
         <Typography variant="h4" component="h1" gutterBottom>
           Book {resort.name}
         </Typography>
+        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
+          ID: {resort.id ?? (resort as any)._id}
+        </Typography>
 
         <Grid container spacing={4}>
           {/* Resort Details */}

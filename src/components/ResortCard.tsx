@@ -27,7 +27,12 @@ export default function ResortCard({ resort }: ResortCardProps) {
   const [wishlisted, setWishlisted] = useState(false);
 
   const handleBookNow = () => {
-    router.push(`/booking/${resort.id}`);
+    const id = (resort as any).id ?? (resort as any)._id;
+    if (!id) {
+      console.error('Resort id is missing, cannot navigate to booking page', resort);
+      return;
+    }
+    router.push(`/booking/${id}`);
   };
 
   const toggleWishlist = () => {

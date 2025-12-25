@@ -106,7 +106,7 @@ export default function Navbar() {
 
   return (
     <>
-        <AppBar
+      <AppBar
         position="sticky"
         elevation={2}
         sx={{
@@ -122,36 +122,39 @@ export default function Navbar() {
               minHeight: { xs: 48, md: 56 },
               px: { xs: 1.5, md: 2 },
               display: 'flex',
-              alignItems: 'center',
               justifyContent: 'space-between',
-              gap: 2,
-              flexWrap: 'nowrap', // ❗ no mobile swapping
+              alignItems: 'center',
             }}
           >
-            {/* Logo */}
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Link href="/" style={{ textDecoration: 'none' }}>
-                <Box
-                  sx={{
-                    fontSize: { xs: 22, md: 26 },
-                    fontWeight: 800,
-                    color: '#1976d2',
-                    lineHeight: 1,
-                  }}
-                >
-                  🏖️ Scaper
-                </Box>
-              </Link>
-            </Box>
+            {/* Logo — extreme left */}
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <Box
+                sx={{
+                  fontSize: { xs: 22, md: 26 },
+                  fontWeight: 800,
+                  color: '#1976d2',
+                  lineHeight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                🏖️ Scaper
+              </Box>
+            </Link>
 
-            {/* Search */}
+            {/* Search — center */}
             <Box
               sx={{
                 flex: 1,
                 maxWidth: 360,
+                mx: 2,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
+                height: 32,
+                '& input': {
+                  padding: '6px 10px',
+                },
               }}
             >
               <SearchBar
@@ -174,21 +177,14 @@ export default function Navbar() {
               </IconButton>
             </Box>
 
-            {/* Right actions */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Link href="/">
-                <IconButton
-                  size="small"
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    color: '#1976d2',
-                  }}
-                >
-                  <HomeIcon />
-                </IconButton>
-              </Link>
-
+            {/* Actions — extreme right */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
               {user ? (
                 <UserMenu
                   user={user}
