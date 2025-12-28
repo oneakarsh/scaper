@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Box, Container, Typography, Skeleton, Grid } from '@mui/material';
 import Navbar from './Navbar';
 import ResortCard from './ResortCard';
@@ -115,15 +116,16 @@ export default function Layout({ children }: LayoutProps) {
   }, []);
 
   // hide resort grid on all pages except home and resorts
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
-  const hideResortGrid = !(pathname === '/' || pathname === '/resorts');
+  const pathname = usePathname() ?? '';
+  // show grid on exact '/' and any route starting with '/resorts'
+  const showResortGrid = pathname === '/' || pathname === '/resorts' || pathname.startsWith('/resorts/');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       <Box component="main" sx={{ flexGrow: 1, py: 0, backgroundColor: '#fafafa' }}>
         {children}
-        {!hideResortGrid && (
+        {showResortGrid && (
           <Container maxWidth="lg" sx={{ py: 4 }}>
             <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
               Featured Resorts

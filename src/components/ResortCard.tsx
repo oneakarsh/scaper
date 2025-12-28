@@ -32,7 +32,7 @@ export default function ResortCard({ resort }: ResortCardProps) {
       console.error('Resort id is missing, cannot navigate to booking page', resort);
       return;
     }
-    router.push(`/booking/${id}`);
+    router.push(`/resorts/${id}`);
   };
 
   const toggleWishlist = () => {
