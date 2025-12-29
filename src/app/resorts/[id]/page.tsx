@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   Box,
   Container,
@@ -28,11 +29,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { Resort } from '@/types';
 import { resortAPI, bookingAPI } from '@/lib/api';
-import { getUser } from '@/lib/auth';
 
 export default function BookingPage() {
   const params = useParams();
   const router = useRouter();
+  const { data: session, status } = useSession();
   const id = params.id as string;
 
   const [resort, setResort] = useState<Resort | null>(null);
@@ -106,8 +107,7 @@ export default function BookingPage() {
   const handleBookingSubmit = async () => {
     if (!resort || !checkInDate || !checkOutDate) return;
 
-    const user = getUser();
-    if (!user) {
+    if (status !== 'authenticated' || !session) {
       router.push('/login');
       return;
     }
@@ -123,7 +123,8 @@ export default function BookingPage() {
         totalPrice: calculateTotalPrice(),
       };
 
-      const response = await bookingAPI.create(bookingData);
+      // Pass the access token to the API call
+      const response = await bookingAPI.create(bookingData, session.accessToken);
       const booking = response.data?.data || response.data;
 
       // Redirect to success page or bookings

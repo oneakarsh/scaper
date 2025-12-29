@@ -13,8 +13,7 @@ import {
   CircularProgress,
   Box,
 } from '@mui/material';
-import { authAPI } from '@/lib/api';
-import { setToken, setUser } from '@/lib/auth';
+import { signIn } from 'next-auth/react';
 
 interface LoginDialogProps {
   open: boolean;
@@ -41,18 +40,19 @@ export default function LoginDialog({
 
     try {
       setLoading(true);
-      const res = await authAPI.login({ email, password });
-      const data = res.data;
-      if (data && data.token) {
-        setToken(data.token);
-        if (data.user) setUser(data.user);
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('Invalid credentials');
+      } else if (result?.ok) {
         onSuccess();
-      } else {
-        setError(data?.message || 'Login failed');
       }
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } }; message?: string };
-      setError(error?.response?.data?.message || error?.message || 'Login failed');
+      setError('Login failed');
     } finally {
       setLoading(false);
     }
