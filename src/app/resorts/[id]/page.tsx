@@ -163,7 +163,7 @@ export default function BookingPage() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Box sx={{ py: 4, px: 2 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Book {resort.name}
         </Typography>
@@ -344,7 +344,7 @@ export default function BookingPage() {
             </Paper>
           </Grid>
         </Grid>
-      </Container>
+      </Box>
     </LocalizationProvider>
   );
 }

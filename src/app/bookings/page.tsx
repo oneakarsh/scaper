@@ -38,7 +38,7 @@ const mockBookings = [
 
 export default function BookingsPage() {
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Box sx={{ py: 4, px: 2 }}>
       <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 3 }}>
         My Bookings
       </Typography>
@@ -79,6 +79,6 @@ export default function BookingsPage() {
           This is a mock view. Real bookings will appear here when connected to the API.
         </Typography>
       </Box>
-    </Container>
+    </Box>
   );
 }

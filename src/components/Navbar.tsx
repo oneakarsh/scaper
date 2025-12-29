@@ -105,7 +105,7 @@ export default function Navbar() {
           borderBottom: '1px solid #e0e0e0',
         }}
       >
-        <Container maxWidth="lg">
+        <Box sx={{ px: 2 }}>
           <Toolbar
             disableGutters
             sx={{
@@ -210,7 +210,7 @@ export default function Navbar() {
               )}
             </Box>
           </Toolbar>
-        </Container>
+        </Box>
       </AppBar>
       <AdvancedFilters
         showSearch={showSearch}

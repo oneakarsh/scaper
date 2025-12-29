@@ -126,7 +126,7 @@ export default function Layout({ children }: LayoutProps) {
       <Box component="main" sx={{ flexGrow: 1, py: 0, backgroundColor: '#fafafa' }}>
         {children}
         {showResortGrid && (
-          <Container maxWidth="lg" sx={{ py: 4 }}>
+          <Box sx={{ py: 4, px: 2 }}>
             <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
               Featured Resorts
             </Typography>
@@ -142,15 +142,15 @@ export default function Layout({ children }: LayoutProps) {
                 ))}
               </Grid>
             ) : (
-              <Grid container spacing={3}>
+              <Grid container spacing={1.5}>
                 {resorts.map((resort, index) => (
-                  <Grid key={resort.id ?? resort._id ?? `resort-${index}`} size={{ xs: 12, sm: 6, md: 4 }}>
+                  <Grid key={resort.id ?? resort._id ?? `resort-${index}`} size={{ xs: 12, sm: 6, md: 3 }}>
                     <ResortCard resort={resort} />
                   </Grid>
                 ))}
               </Grid>
             )}
-          </Container>
+          </Box>
         )}
       </Box>
       <Box
@@ -163,11 +163,11 @@ export default function Layout({ children }: LayoutProps) {
           textAlign: 'center',
         }}
       >
-        <Container maxWidth="lg">
+        <Box sx={{ px: 2 }}>
           <Typography variant="body1">
             &copy; 2025 Scaper - Resort Booking System. All rights reserved.
           </Typography>
-        </Container>
+        </Box>
       </Box>
     </Box>
   );

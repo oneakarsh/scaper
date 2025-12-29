@@ -83,4 +83,22 @@ export const bookingAPI = {
   },
 };
 
-export default api;
+// User APIs (for super admin)
+export const userAPI = {
+  getAll: (token?: string) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    return api.get('/users', config);
+  },
+  create: (data: Record<string, unknown>, token?: string) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    return api.post('/users', data, config);
+  },
+  update: (id: string, data: Record<string, unknown>, token?: string) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    return api.put(`/users/${id}`, data, config);
+  },
+  delete: (id: string, token?: string) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    return api.delete(`/users/${id}`, config);
+  },
+};

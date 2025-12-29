@@ -16,7 +16,7 @@ const mockBookings = [
 
 export default function ProfilePage() {
     return (
-        <Container maxWidth="md" sx={{ py: 4 }}>
+        <Box sx={{ py: 4, px: 2, maxWidth: 800, mx: 'auto' }}>
             <Box display="flex" alignItems="center" gap={2} sx={{ mb: 3 }}>
                 <Avatar sx={{ width: 72, height: 72 }}>JD</Avatar>
                 <Box>
@@ -43,6 +43,6 @@ export default function ProfilePage() {
                     This is a mock profile. Connect to the API to load real user data.
                 </Typography>
             </Box>
-        </Container>
+        </Box>
     );
 }
