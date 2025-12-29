@@ -143,8 +143,8 @@ export default function Layout({ children }: LayoutProps) {
               </Grid>
             ) : (
               <Grid container spacing={3}>
-                {resorts.map((resort) => (
-                  <Grid key={resort.id} size={{ xs: 12, sm: 6, md: 4 }}>
+                {resorts.map((resort, index) => (
+                  <Grid key={resort.id ?? resort._id ?? `resort-${index}`} size={{ xs: 12, sm: 6, md: 4 }}>
                     <ResortCard resort={resort} />
                   </Grid>
                 ))}

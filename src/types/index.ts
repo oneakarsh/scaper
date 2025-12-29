@@ -7,7 +7,8 @@ export interface User {
 }
 
 export interface Resort {
-  id: string;
+  id?: string;
+  _id?: string;
   name: string;
   description: string;
   location: string;

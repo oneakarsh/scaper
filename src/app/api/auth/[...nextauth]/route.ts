@@ -46,12 +46,16 @@ export const authOptions = {
     strategy: 'jwt' as const,
   },
   callbacks: {
+    // @ts-expect-error: NextAuth callback parameter types are not fully compatible with strict typing
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.accessToken = user.token;
       }
       return token;
     },
+    // @ts-expect-error: NextAuth callback parameter types are not fully compatible with strict typing
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: { session: any; token: any }) {
       session.accessToken = token.accessToken as string;
       return session;

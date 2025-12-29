@@ -27,7 +27,7 @@ export default function ResortCard({ resort }: ResortCardProps) {
   const [wishlisted, setWishlisted] = useState(false);
 
   const handleBookNow = () => {
-    const id = (resort as any).id ?? (resort as any)._id;
+    const id = resort.id ?? resort._id;
     if (!id) {
       console.error('Resort id is missing, cannot navigate to booking page', resort);
       return;

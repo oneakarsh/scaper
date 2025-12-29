@@ -129,9 +129,9 @@ export default function BookingPage() {
 
       // Redirect to success page or bookings
       router.push('/bookings');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Booking failed:', err);
-      setError(err.response?.data?.message || 'Booking failed');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Booking failed');
     } finally {
       setBookingLoading(false);
     }
@@ -168,7 +168,7 @@ export default function BookingPage() {
           Book {resort.name}
         </Typography>
         <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
-          ID: {resort.id ?? (resort as any)._id}
+          ID: {resort.id ?? resort._id}
         </Typography>
 
         <Grid container spacing={4}>

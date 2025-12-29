@@ -182,7 +182,7 @@ export default function AdminDashboard() {
       };
 
       if (editingResort) {
-        await resortAPI.update(editingResort.id, resortData, session?.accessToken);
+        await resortAPI.update(editingResort.id!, resortData, session?.accessToken);
       } else {
         await resortAPI.create(resortData, session?.accessToken);
       }
@@ -340,8 +340,8 @@ export default function AdminDashboard() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {resorts.map((resort) => (
-                  <TableRow key={resort.id}>
+                {resorts.map((resort, index) => (
+                  <TableRow key={resort.id ?? resort._id ?? index}>
                     <TableCell>{resort.name}</TableCell>
                     <TableCell>{resort.location}</TableCell>
                     <TableCell>${resort.pricePerNight}</TableCell>
@@ -359,7 +359,7 @@ export default function AdminDashboard() {
                         size="small"
                         color="error"
                         startIcon={<DeleteIcon />}
-                        onClick={() => handleDeleteResort(resort.id)}
+                        onClick={() => handleDeleteResort(resort.id ?? resort._id!)}
                       >
                         Delete
                       </Button>
