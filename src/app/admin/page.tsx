@@ -118,16 +118,22 @@ export default function AdminDashboard() {
     }
 
     // Check if user has admin or superadmin role
-    const userRole = (session.user as any)?.role;
+    const userRole = session.user.role;
     if (userRole !== 'admin' && userRole !== 'superadmin') {
       router.push('/');
       return;
     }
 
-    // setCurrentUser(session.user as User);
     setCurrentUser(session.user as User);
     fetchData();
   }, [router, session, status]);
+
+  // Reset tab value if current tab is not available for the user's role
+  useEffect(() => {
+    if (currentUser?.role === 'admin' && tabValue > 1) {
+      setTabValue(1); // Admin can only access Overview (0) and Manage Bookings (1)
+    }
+  }, [currentUser?.role, tabValue]);
 
   const fetchData = async () => {
     try {
@@ -394,7 +400,9 @@ export default function AdminDashboard() {
           variant="fullWidth"
         >
           <Tab icon={<DashboardIcon />} label="Overview" />
-          <Tab icon={<HotelIcon />} label="Manage Resorts" />
+          {currentUser?.role === 'superadmin' && (
+            <Tab icon={<HotelIcon />} label="Manage Resorts" />
+          )}
           <Tab icon={<BookingIcon />} label="Manage Bookings" />
           {currentUser?.role === 'superadmin' && (
             <Tab icon={<PeopleIcon />} label="Manage Users" />
@@ -424,7 +432,7 @@ export default function AdminDashboard() {
               <Typography variant="body1" sx={{ opacity: 0.8 }}>
                 {currentUser?.role === 'superadmin'
                   ? 'Manage users, resorts, and oversee the entire system'
-                  : 'Manage resorts and bookings for your assigned properties'
+                  : 'Manage bookings and oversee resort operations'
                 }
               </Typography>
             </Box>
@@ -550,8 +558,9 @@ export default function AdminDashboard() {
           </Box>
         </TabPanel>
 
-        {/* Manage Resorts Tab */}
-        <TabPanel value={tabValue} index={1}>
+        {/* Manage Resorts Tab (Super Admin Only) */}
+        {currentUser?.role === 'superadmin' && (
+          <TabPanel value={tabValue} index={1}>
           <Box>
             {/* Header */}
             <Box
@@ -665,9 +674,10 @@ export default function AdminDashboard() {
             )}
           </Box>
         </TabPanel>
+        )}
 
         {/* Manage Bookings Tab */}
-        <TabPanel value={tabValue} index={2}>
+        <TabPanel value={tabValue} index={currentUser?.role === 'superadmin' ? 2 : 1}>
           <Box>
             {/* Header */}
             <Box

@@ -77,6 +77,8 @@ export default function Navbar() {
   // Success handlers
   const handleLoginSuccess = () => {
     setOpenLoginDialog(false);
+    // Redirect to admin page - it will check role and redirect if not authorized
+    router.push('/admin');
   };
 
   const handleRegisterSuccess = () => {
@@ -187,7 +189,7 @@ export default function Navbar() {
             >
               {session ? (
                 <UserMenu
-                  user={{ name: session.user?.name || '', role: 'user' }} // Default role, adjust as needed
+                  user={{ name: session.user?.name || '', role: session.user.role }} // Default role, adjust as needed
                   anchorEl={anchorEl}
                   onMenuOpen={e => setAnchorEl(e.currentTarget)}
                   onMenuClose={() => setAnchorEl(null)}
