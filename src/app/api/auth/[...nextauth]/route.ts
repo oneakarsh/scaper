@@ -52,7 +52,6 @@ export const authOptions = {
       if (user) {
         token.accessToken = user.token;
         token.role = user.role;
-        token.id = user.id;
         token.name = user.name;
         token.email = user.email;
       }
@@ -61,11 +60,6 @@ export const authOptions = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: { session: any; token: any }) {
       session.accessToken = token.accessToken as string;
-      session.user = session.user || {};
-      session.user.id = token.id;
-      session.user.name = token.name;
-      session.user.email = token.email;
-      session.user.role = token.role;
       return session;
     },
   },
