@@ -30,6 +30,7 @@ export const authOptions = {
               id: user.id,
               email: user.email,
               name: user.name,
+              role: user.role,
               token: token,
             };
           }
@@ -50,12 +51,21 @@ export const authOptions = {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.accessToken = user.token;
+        token.role = user.role;
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
       }
       return token;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async session({ session, token }: { session: any; token: any }) {
       session.accessToken = token.accessToken as string;
+      session.user = session.user || {};
+      session.user.id = token.id;
+      session.user.name = token.name;
+      session.user.email = token.email;
+      session.user.role = token.role;
       return session;
     },
   },

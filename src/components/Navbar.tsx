@@ -27,6 +27,13 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { data: session, status } = useSession();
 
+  // DEBUG: log session/status to browser console to verify role is present
+  // Remove this after debugging
+  if (typeof window !== 'undefined') {
+    // eslint-disable-next-line no-console
+    console.log('[Navbar] session=', session, 'status=', status);
+  }
+
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [filters, setFilters] = useState({
@@ -187,7 +194,7 @@ export default function Navbar() {
             >
               {session ? (
                 <UserMenu
-                  user={{ name: session.user?.name || '', role: 'user' }} // Default role, adjust as needed
+                  user={{ name: session.user?.name || '', role: (session.user as any)?.role || 'user' }}
                   anchorEl={anchorEl}
                   onMenuOpen={e => setAnchorEl(e.currentTarget)}
                   onMenuClose={() => setAnchorEl(null)}
