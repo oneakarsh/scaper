@@ -15,9 +15,8 @@ import {
 } from '@mui/icons-material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-import { getUser, logout } from '@/lib/auth';
-import { User } from '@/types';
 import SearchBar from './SearchBar';
 import AdvancedFilters from './AdvancedFilters';
 import UserMenu from './UserMenu';
@@ -26,12 +25,14 @@ const LoginDialog = dynamic(() => import('./LoginDialog'), { ssr: false });
 const RegisterDialog = dynamic(() => import('./RegisterDialog'), { ssr: false });
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [user, setUser] = useState<User | null>(() => {
-    if (typeof window !== 'undefined') {
-      return getUser();
-    }
-    return null;
-  });
+  const { data: session, status } = useSession();
+
+  // DEBUG: log session/status to browser console to verify role is present
+  // Remove this after debugging
+  if (typeof window !== 'undefined') {
+    // eslint-disable-next-line no-console
+    console.log('[Navbar] session=', session, 'status=', status);
+  }
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -51,10 +52,9 @@ export default function Navbar() {
 
   const handleMenuClose = () => setAnchorEl(null);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
     handleMenuClose();
-    setUser(null);
   };
 
   const handleSearch = () => {
@@ -84,12 +84,12 @@ export default function Navbar() {
   // Success handlers
   const handleLoginSuccess = () => {
     setOpenLoginDialog(false);
-    setUser(getUser());
+    // Redirect to admin page - it will check role and redirect if not authorized
+    router.push('/admin');
   };
 
   const handleRegisterSuccess = () => {
     setOpenRegisterDialog(false);
-    setUser(getUser());
   };
 
   // Switch handlers
@@ -114,7 +114,7 @@ export default function Navbar() {
           borderBottom: '1px solid #e0e0e0',
         }}
       >
-        <Container maxWidth="lg">
+        <Box sx={{ px: 2 }}>
           <Toolbar
             disableGutters
             sx={{
@@ -194,9 +194,9 @@ export default function Navbar() {
                 gap: 1,
               }}
             >
-              {user ? (
+              {session ? (
                 <UserMenu
-                  user={user}
+                  user={{ name: session.user?.name || '', role: (session.user as any)?.role || 'user' }}
                   anchorEl={anchorEl}
                   onMenuOpen={e => setAnchorEl(e.currentTarget)}
                   onMenuClose={() => setAnchorEl(null)}
@@ -219,7 +219,7 @@ export default function Navbar() {
               )}
             </Box>
           </Toolbar>
-        </Container>
+        </Box>
       </AppBar>
       <AdvancedFilters
         showSearch={showSearch}

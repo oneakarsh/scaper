@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Box, Container, Typography, Skeleton, Grid } from '@mui/material';
 import Navbar from './Navbar';
 import ResortCard from './ResortCard';
@@ -115,16 +116,17 @@ export default function Layout({ children }: LayoutProps) {
   }, []);
 
   // hide resort grid on all pages except home and resorts
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
-  const hideResortGrid = !(pathname === '/' || pathname === '/resorts');
+  const pathname = usePathname() ?? '';
+  // show grid on exact '/' and any route starting with '/resorts'
+  const showResortGrid = pathname === '/' || pathname === '/resorts' || pathname.startsWith('/resorts/');
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       <Box component="main" sx={{ flexGrow: 1, py: 0, backgroundColor: '#fafafa' }}>
         {children}
-        {!hideResortGrid && (
-          <Container maxWidth="lg" sx={{ py: 4 }}>
+        {showResortGrid && (
+          <Box sx={{ py: 4, px: 2 }}>
             <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 3, fontWeight: 600 }}>
               Featured Resorts
             </Typography>
@@ -140,15 +142,15 @@ export default function Layout({ children }: LayoutProps) {
                 ))}
               </Grid>
             ) : (
-              <Grid container spacing={3}>
-                {resorts.map((resort) => (
-                  <Grid key={resort.id} size={{ xs: 12, sm: 6, md: 4 }}>
+              <Grid container spacing={1.5}>
+                {resorts.map((resort, index) => (
+                  <Grid key={resort.id ?? resort._id ?? `resort-${index}`} size={{ xs: 12, sm: 6, md: 3 }}>
                     <ResortCard resort={resort} />
                   </Grid>
                 ))}
               </Grid>
             )}
-          </Container>
+          </Box>
         )}
       </Box>
       <Box
@@ -161,11 +163,11 @@ export default function Layout({ children }: LayoutProps) {
           textAlign: 'center',
         }}
       >
-        <Container maxWidth="lg">
+        <Box sx={{ px: 2 }}>
           <Typography variant="body1">
             &copy; 2025 Scaper - Resort Booking System. All rights reserved.
           </Typography>
-        </Container>
+        </Box>
       </Box>
     </Box>
   );

@@ -2,12 +2,13 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
   role: 'user' | 'admin' | 'superadmin';
 }
 
 export interface Resort {
-  id: string;
+  id?: string;
+  _id?: string;
   name: string;
   description: string;
   location: string;

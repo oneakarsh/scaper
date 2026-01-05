@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   Box,
   Container,
@@ -28,11 +29,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { Resort } from '@/types';
 import { resortAPI, bookingAPI } from '@/lib/api';
-import { getUser } from '@/lib/auth';
 
 export default function BookingPage() {
   const params = useParams();
   const router = useRouter();
+  const { data: session, status } = useSession();
   const id = params.id as string;
 
   const [resort, setResort] = useState<Resort | null>(null);
@@ -106,8 +107,7 @@ export default function BookingPage() {
   const handleBookingSubmit = async () => {
     if (!resort || !checkInDate || !checkOutDate) return;
 
-    const user = getUser();
-    if (!user) {
+    if (status !== 'authenticated' || !session) {
       router.push('/login');
       return;
     }
@@ -123,14 +123,15 @@ export default function BookingPage() {
         totalPrice: calculateTotalPrice(),
       };
 
-      const response = await bookingAPI.create(bookingData);
+      // Pass the access token to the API call
+      const response = await bookingAPI.create(bookingData, session.accessToken);
       const booking = response.data?.data || response.data;
 
       // Redirect to success page or bookings
       router.push('/bookings');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Booking failed:', err);
-      setError(err.response?.data?.message || 'Booking failed');
+      setError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Booking failed');
     } finally {
       setBookingLoading(false);
     }
@@ -162,12 +163,12 @@ export default function BookingPage() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Box sx={{ py: 4, px: 2 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Book {resort.name}
         </Typography>
         <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 2 }}>
-          ID: {resort.id ?? (resort as any)._id}
+          ID: {resort.id ?? resort._id}
         </Typography>
 
         <Grid container spacing={4}>
@@ -343,7 +344,7 @@ export default function BookingPage() {
             </Paper>
           </Grid>
         </Grid>
-      </Container>
+      </Box>
     </LocalizationProvider>
   );
 }

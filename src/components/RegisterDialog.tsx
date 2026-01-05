@@ -15,7 +15,6 @@ import {
   Box,
 } from '@mui/material';
 import { authAPI } from '@/lib/api';
-import { setToken, setUser } from '@/lib/auth';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 interface RegisterDialogProps {
@@ -51,10 +50,10 @@ export default function RegisterDialog({
       setLoading(true);
       const res = await authAPI.register({ name, email, password, confirmPassword, phone });
       const data = res.data;
-      if (data && data.token) {
-        setToken(data.token);
-        if (data.user) setUser(data.user);
+      if (data) {
+        // Registration successful, switch to login
         onSuccess();
+        onSwitchToLogin();
       } else {
         setError(data?.message || 'Registration failed');
       }
