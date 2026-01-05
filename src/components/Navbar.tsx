@@ -84,6 +84,8 @@ export default function Navbar() {
   // Success handlers
   const handleLoginSuccess = () => {
     setOpenLoginDialog(false);
+    // Redirect to admin page - it will check role and redirect if not authorized
+    router.push('/admin');
   };
 
   const handleRegisterSuccess = () => {
