@@ -51,7 +51,7 @@ Scaper is a comprehensive resort booking platform that allows users to discover,
 - **State Management**: React Hooks
 - **Authentication**: JWT tokens
 - **Styling**: Utility-first CSS with Tailwind
-
+#
 ## Project Structure
 
 ```
