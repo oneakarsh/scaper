@@ -13,9 +13,8 @@ export async function middleware(req: NextRequest) {
 
   if (pathname.startsWith('/admin')) {
     if (!token || (token.role !== 'admin' && token.role !== 'superadmin')) {
-      const url = req.nextUrl.clone();
-      url.pathname = '/login';
-      return NextResponse.redirect(url);
+      // Show 404 for unauthorized access instead of redirecting to login
+      return NextResponse.rewrite(new URL('/404', req.url));
     }
   }
 

@@ -135,7 +135,7 @@ export default function Navbar() {
                   alignItems: 'center',
                 }}
               >
-                <img src={'/logo.png'} alt="Scaper Logo" width={32} height={32} style={{ marginRight: 8 }} />
+                <img src={'/logo.svg'} alt="Scaper Logo" width={32} height={32} style={{ marginRight: 8 }} />
                 <Box
                   component="span"
                   sx={{
